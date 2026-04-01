@@ -2,7 +2,7 @@ import os
 from datetime import datetime, timedelta, timezone
 
 from jose import JWTError, jwt
-from passlib.context import CryptContext
+import bcrypt as _bcrypt
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -11,17 +11,14 @@ SECRET_KEY    = os.getenv("JWT_SECRET", "change-this-secret")
 ALGORITHM     = os.getenv("JWT_ALGORITHM", "HS256")
 EXPIRE_HOURS  = int(os.getenv("JWT_EXPIRE_HOURS", "24"))
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-
 
 # ── Passwords ────────────────────────────────────────────────
 
 def hash_password(plain: str) -> str:
-    return pwd_context.hash(plain)
-
+    return _bcrypt.hashpw(plain.encode(), _bcrypt.gensalt()).decode()
 
 def verify_password(plain: str, hashed: str) -> bool:
-    return pwd_context.verify(plain, hashed)
+    return _bcrypt.checkpw(plain.encode(), hashed.encode())
 
 
 # ── JWT ──────────────────────────────────────────────────────
