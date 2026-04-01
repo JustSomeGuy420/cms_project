@@ -2,6 +2,7 @@ import os
 import json
 import redis
 from dotenv import load_dotenv
+from decimal import Decimal
 
 load_dotenv()
 
@@ -26,12 +27,15 @@ def get(key: str):
     raw = _client.get(key)
     return json.loads(raw) if raw else None
 
+def _json_default(obj):
+    if isinstance(obj, Decimal):
+        return float(obj)
+    raise TypeError(f"Object of type {type(obj)} is not JSON serializable")
 
 def set(key: str, value, ttl: int = DEFAULT_TTL) -> None:
-    """Cache value as JSON with a TTL (seconds)."""
     if _client is None:
         return
-    _client.setex(key, ttl, json.dumps(value))
+    _client.setex(key, ttl, json.dumps(value, default=_json_default))
 
 
 def invalidate(key: str) -> None:
