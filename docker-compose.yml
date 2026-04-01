@@ -1,0 +1,58 @@
+services:
+
+  # ── PostgreSQL ───────────────────────────────────────────────
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB:       cms_db
+      POSTGRES_USER:     cms_user
+      POSTGRES_PASSWORD: cms_password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./sql/create.sql:/docker-entrypoint-initdb.d/01_create.sql
+      - ./sql/views.sql:/docker-entrypoint-initdb.d/02_views.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U cms_user -d cms_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    ports:
+      - "5432:5432"    # expose for local psql access during dev
+
+  # ── Redis ────────────────────────────────────────────────────
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    ports:
+      - "6379:6379"    # expose for local inspection during dev
+
+  # ── API ──────────────────────────────────────────────────────
+  api:
+    build: .
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      DB_HOST:     db
+      DB_PORT:     5432
+      DB_NAME:     cms_db
+      DB_USER:     cms_user
+      DB_PASSWORD: cms_password
+      REDIS_HOST:  redis
+      REDIS_PORT:  6379
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+
+volumes:
+  postgres_data:
