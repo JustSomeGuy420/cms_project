@@ -15,7 +15,7 @@ Constraints satisfied:
 import psycopg2
 import psycopg2.extras
 import random
-import hashlib
+import bcrypt as _bcrypt
 from datetime import datetime, timedelta
 
 # ============================================================
@@ -29,6 +29,8 @@ DB_CONFIG = {
     "user":     "postgres",
     "password": "koVPHwrTSAjiZCQRJWCqdVQsexsfllIA"
 }
+
+BULK_PASSWORD_HASH = _bcrypt.hashpw(b"password123", _bcrypt.gensalt()).decode()
 
 NUM_STUDENTS  = 100_000
 NUM_LECTURERS = 60
@@ -108,7 +110,7 @@ SECTION_TITLES = ["Introduction", "Core Concepts", "Advanced Topics",
 # ============================================================
 
 def hash_password(password: str) -> str:
-    return hashlib.sha256(password.encode()).hexdigest()
+    return _bcrypt.hashpw(password.encode(), _bcrypt.gensalt()).decode()
 
 def random_past_date(max_days_ago: int = 730) -> datetime:
     return datetime.now() - timedelta(days=random.randint(30, max_days_ago))
@@ -169,7 +171,7 @@ def seed_lecturers(cur) -> list[int]:
         (
             f"Lecturer {i}",
             f"lecturer{i}@university.edu",
-            hash_password(f"lect{i}pass"),
+            BULK_PASSWORD_HASH,
             "active"
         )
         for i in range(1, NUM_LECTURERS + 1)
@@ -198,7 +200,7 @@ def seed_students(cur) -> list[int]:
         (
             f"{random.choice(FIRST_NAMES)} {random.choice(LAST_NAMES)}",
             f"student{i}@university.edu",
-            hash_password(f"stud{i}pass"),
+            BULK_PASSWORD_HASH,
             "active"
         )
         for i in range(1, NUM_STUDENTS + 1)
