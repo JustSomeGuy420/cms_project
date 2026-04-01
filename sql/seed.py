@@ -23,11 +23,11 @@ from datetime import datetime, timedelta
 # ============================================================
 
 DB_CONFIG = {
-    "host":     "localhost",
-    "port":     5432,
-    "dbname":   "cms_db",
-    "user":     "cms_user",
-    "password": "cms_password"
+    "host":     "hopper.proxy.rlwy.net",
+    "port":     35627,
+    "dbname":   "railway",
+    "user":     "postgres",
+    "password": "koVPHwrTSAjiZCQRJWCqdVQsexsfllIA"
 }
 
 NUM_STUDENTS  = 100_000
@@ -373,7 +373,7 @@ def seed_submissions(cur, assignments: list[tuple]) -> None:
         enrolled = course_students.get(course_code, [])
         if not enrolled:
             continue
-        sample_size = max(1, int(len(enrolled) * 0.20))
+        sample_size = max(1, int(len(enrolled) * 0.02))
         submitters  = random.sample(enrolled, min(sample_size, len(enrolled)))
 
         for student_id in submitters:
