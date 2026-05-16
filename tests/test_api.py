@@ -5,6 +5,12 @@ These run against a real PostgreSQL + Redis instance (provided by CI).
 import pytest
 from fastapi.testclient import TestClient
 from main import app
+from api.db import init_pool
+from api import cache
+
+# Run startup manually for the test session
+init_pool()
+cache.init_cache()
 
 client = TestClient(app)
 
