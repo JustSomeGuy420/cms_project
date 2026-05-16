@@ -2,7 +2,6 @@
 Integration tests for the CMS API.
 These run against a real PostgreSQL + Redis instance (provided by CI).
 """
-import pytest
 from fastapi.testclient import TestClient
 from main import app
 from api.db import init_pool
