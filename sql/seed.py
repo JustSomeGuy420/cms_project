@@ -591,11 +591,11 @@ def main() -> None:
             count = cur.fetchone()[0]
             print(f"  {label:<22} {count:>10,} rows")
 
-        print("\n✅ Database ready.\n")
+        print("\n Database ready.\n")
 
     except Exception as e:
         conn.rollback()
-        print(f"\n❌ Seed failed: {e}")
+        print(f"\n Seed failed: {e}")
         raise
 
     finally:

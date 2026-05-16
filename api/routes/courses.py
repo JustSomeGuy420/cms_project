@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import BaseModel
 
 from api.db import get_cursor
-from api.dependencies import get_db, get_current_user, require_admin, require_student
+from api.dependencies import get_db, get_current_user, require_admin
 from api import cache
 
 router = APIRouter(prefix="/courses", tags=["Courses"])

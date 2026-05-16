@@ -72,7 +72,7 @@ Expected output at the end:
   Course                        200 rows
   Enroll                    450,000+ rows
   ...
-✅ Database ready.
+Database ready.
 ```
 
 ---

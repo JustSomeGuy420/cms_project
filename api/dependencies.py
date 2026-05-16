@@ -1,4 +1,3 @@
-from contextlib import contextmanager
 from typing import Generator
 
 from fastapi import Depends, HTTPException, status
